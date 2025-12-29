@@ -1,26 +1,17 @@
 import LensScene from "./components/LensScene";
+import "./App.css";
 
 export default function App() {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 3fr",
-        height: "100vh",
-      }}
-    >
-      <div
-        style={{
-          padding: "20px",
-          background: "#0f172a",
-          color: "#fff",
-        }}
-      >
+    <div className="app">
+      <div className="sidebar">
         <h2>Optical Lens Configurator</h2>
-        <p>Adjust lens parameters using the panel.</p>
+        <p>Adjust lens parameters using the control panel.</p>
       </div>
 
-      <LensScene />
+      <div className="canvas-wrapper">
+        <LensScene />
+      </div>
     </div>
   );
 }

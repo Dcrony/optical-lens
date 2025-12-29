@@ -39,8 +39,8 @@ export default function LensScene() {
     },
   });
 
-  return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+  return (  
+    <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: "100%", height: "100%" }} >
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 5, 5]} intensity={1} />
 
