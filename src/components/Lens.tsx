@@ -19,7 +19,7 @@ export default function Lens({
   offsetX: number;
   ior: number;
 }) {
-  const profile = computeLensProfile(rx, frame);
+  const profile = computeLensProfile(rx, frame, ior);
 
   const geometry = useMemo(
     () =>

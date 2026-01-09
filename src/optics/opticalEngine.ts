@@ -29,17 +29,52 @@ export type LensProfile = {
 
 export function computeLensProfile(
   rx: EyeRx,
-  frame: FrameData
+  frame: FrameData,
+  index: number
 ): LensProfile {
-  const power = rx.sph + rx.cyl * 0.5;
+  const semiDiameter =
+    Math.sqrt(frame.A ** 2 + frame.B ** 2) / 4; // mm
 
-  const centerThickness =
-    power > 0 ? 2.2 + power * 0.4 : 1.2 + Math.abs(power) * 0.15;
+  const n = index;
+
+  const sph = rx.sph;
+  const cyl = rx.cyl;
+
+  // Convert diopters → radius (mm)
+  const baseCurveD = frame.BC;
+  const frontRadius =
+    sph !== 0 ? 1000 / Math.abs(sph + baseCurveD) : Infinity;
+
+  const backRadius =
+    sph !== 0 ? 1000 / Math.abs(sph) : Infinity;
+
+  // Sag equation
+  const sag = (r: number, y: number) =>
+    r === Infinity ? 0 : (y * y) / (2 * r);
+
+  const edgeSagFront = sag(frontRadius, semiDiameter);
+  const edgeSagBack = sag(backRadius, semiDiameter);
+
+  const powerSag = Math.abs(edgeSagFront - edgeSagBack);
+
+  // Cylinder contribution
+  const cylSag = Math.abs(cyl) * semiDiameter * 0.03;
+
+  let centerThickness: number;
+
+  if (sph < 0) {
+    // Minus lens: center fixed
+    centerThickness = 1.0;
+  } else {
+    // Plus lens: edge fixed at 2mm
+    centerThickness = 2.0 + powerSag + cylSag;
+  }
 
   return {
-    centerThickness: Math.max(1, centerThickness),
-    frontCurve: 0.12 + Math.max(0, power) * 0.04,
-    backCurve: 0.08 + Math.abs(power) * 0.03,
-    toricStrength: Math.abs(rx.cyl) * 0.06,
+    centerThickness,
+    frontCurve: 1 / frontRadius,
+    backCurve: 1 / backRadius,
+    toricStrength: cylSag,
   };
 }
+

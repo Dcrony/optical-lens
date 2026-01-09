@@ -33,8 +33,10 @@ export default function LensScene() {
       </Canvas>
       </div>
 
-      <PrescriptionPanel rx={rx} setRx={setRx} />
+      <div className="panell">
+        <PrescriptionPanel rx={rx} setRx={setRx} />
       <FramePanel frame={frame} setFrame={setFrame} />
+      </div>
     </>
   );
 }
